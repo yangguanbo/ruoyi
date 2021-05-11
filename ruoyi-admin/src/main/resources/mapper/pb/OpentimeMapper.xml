@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pb.mapper.OpentimeMapper">
+    
+    <resultMap type="Opentime" id="OpentimeResult">
+        <result property="rid"    column="Rid"    />
+        <result property="openyear"    column="OpenYear"    />
+        <result property="starttime"    column="StartTime"    />
+        <result property="endtime"    column="EndTime"    />
+        <result property="phasecode"    column="PhaseCode"    />
+        <result property="projectid"    column="ProjectId"    />
+        <result property="isused"    column="IsUsed"    />
+    </resultMap>
+
+    <sql id="selectOpentimeVo">
+        select Rid, OpenYear, StartTime, EndTime, PhaseCode, ProjectId, IsUsed from opentime
+    </sql>
+
+    <select id="selectOpentimeList" parameterType="Opentime" resultMap="OpentimeResult">
+        <include refid="selectOpentimeVo"/>
+        <where>  
+            <if test="openyear != null "> and OpenYear = #{openyear}</if>
+            <if test="starttime != null "> and StartTime = #{starttime}</if>
+            <if test="endtime != null "> and EndTime = #{endtime}</if>
+            <if test="isused != null and isused != '' "> and IsUsed = #{isused}</if>
+        </where>
+    </select>
+    
+    <select id="selectOpentimeById" parameterType="Long" resultMap="OpentimeResult">
+        <include refid="selectOpentimeVo"/>
+        where Rid = #{rid}
+    </select>
+        
+    <insert id="insertOpentime" parameterType="Opentime" useGeneratedKeys="true" keyProperty="rid">
+        insert into opentime
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="openyear != null">OpenYear,</if>
+            <if test="starttime != null">StartTime,</if>
+            <if test="endtime != null">EndTime,</if>
+            <if test="phasecode != null">PhaseCode,</if>
+            <if test="projectid != null">ProjectId,</if>
+            <if test="isused != null">IsUsed,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="openyear != null">#{openyear},</if>
+            <if test="starttime != null">#{starttime},</if>
+            <if test="endtime != null">#{endtime},</if>
+            <if test="phasecode != null">#{phasecode},</if>
+            <if test="projectid != null">#{projectid},</if>
+            <if test="isused != null">#{isused},</if>
+         </trim>
+    </insert>
+
+    <update id="updateOpentime" parameterType="Opentime">
+        update opentime
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="openyear != null">OpenYear = #{openyear},</if>
+            <if test="starttime != null">StartTime = #{starttime},</if>
+            <if test="endtime != null">EndTime = #{endtime},</if>
+            <if test="phasecode != null">PhaseCode = #{phasecode},</if>
+            <if test="projectid != null">ProjectId = #{projectid},</if>
+            <if test="isused != null">IsUsed = #{isused},</if>
+        </trim>
+        where Rid = #{rid}
+    </update>
+
+    <delete id="deleteOpentimeById" parameterType="Long">
+        delete from opentime where Rid = #{rid}
+    </delete>
+
+    <delete id="deleteOpentimeByIds" parameterType="String">
+        delete from opentime where Rid in 
+        <foreach item="rid" collection="array" open="(" separator="," close=")">
+            #{rid}
+        </foreach>
+    </delete>
+    
+</mapper>
